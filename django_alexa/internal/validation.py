@@ -26,7 +26,7 @@ def validate_response_limit(value):
     """
     value - response content
     """
-    if len(value) >= 1024 * 1024 * 24
+    if len(value) >= 1024 * 1024 * 24:
         msg = "Alexa response content is bigger then 24 kilobytes: {0}".format(value)
         raise InternalError(msg)
 
