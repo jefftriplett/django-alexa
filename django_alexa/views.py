@@ -49,6 +49,7 @@ class ASKView(APIView):
         log.info("Alexa Request Body: {0}".format(validated_data))
         intent_kwargs = {}
         session = validated_data['session']
+        session['_context'] = validated_data['context']
         app = ALEXA_APP_IDS[session['application']['applicationId']]
         if validated_data["request"]["type"] == "IntentRequest":
             intent_name = validated_data["request"]["intent"]["name"]

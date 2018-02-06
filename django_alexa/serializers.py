@@ -46,6 +46,11 @@ class ASKRequestSerializer(BaseASKSerializer):
     intent = ASKIntentSerializer(required=False)
     reason = serializers.CharField(required=False)
 
+class AskSystemSerializer(BaseASKSerializer):
+    apiAccessToken = serializers.CharField()
+
+class ASKContextSerializer(BaseASKSerializer):
+    System = AskSystemSerializer(BaseASKSerializer)
 
 class ASKOutputSpeechSerializer(BaseASKSerializer):
     # TODO: Choice validation to check if text and ssml are not both empty
@@ -75,7 +80,7 @@ class ASKInputSerializer(BaseASKSerializer):
     version = serializers.FloatField(required=True)
     session = ASKSessionSerializer()
     request = ASKRequestSerializer()
-
+    context = ASKContextSerializer()
 
 class ASKOutputSerializer(BaseASKSerializer):
     version = serializers.FloatField(required=True)
