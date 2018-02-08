@@ -49,7 +49,6 @@ class ASKView(APIView):
         log.info("Alexa Request Body: {0}".format(validated_data))
         intent_kwargs = {}
         session = validated_data['session']
-        session['_context'] = validated_data['context']
         app = ALEXA_APP_IDS[session['application']['applicationId']]
         if validated_data["request"]["type"] == "IntentRequest":
             intent_name = validated_data["request"]["intent"]["name"]
@@ -62,6 +61,8 @@ class ASKView(APIView):
                 intent_kwargs[slot_key] = slot_value
         else:
             intent_name = validated_data["request"]["type"]
+            intent_kwargs['context'] = validated_data['context']
+            intent_kwargs['request'] = validated_data['request']
         _, slot = IntentsSchema.get_intent(app, intent_name)
         if slot:
             slots = slot(data=intent_kwargs)

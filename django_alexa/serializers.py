@@ -45,12 +45,14 @@ class ASKRequestSerializer(BaseASKSerializer):
     timestamp = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%SZ")
     intent = ASKIntentSerializer(required=False)
     reason = serializers.CharField(required=False)
+    message = serializers.DictField(required=False)
 
 class AskSystemSerializer(BaseASKSerializer):
     apiAccessToken = serializers.CharField()
+    application = ASKApplicationSerializer()
 
 class ASKContextSerializer(BaseASKSerializer):
-    System = AskSystemSerializer(BaseASKSerializer)
+    System = AskSystemSerializer()
 
 class ASKOutputSpeechSerializer(BaseASKSerializer):
     # TODO: Choice validation to check if text and ssml are not both empty
@@ -78,9 +80,18 @@ class ASKResponseSerializer(BaseASKSerializer):
 
 class ASKInputSerializer(BaseASKSerializer):
     version = serializers.FloatField(required=True)
-    session = ASKSessionSerializer()
+    session = ASKSessionSerializer(required=False)
     request = ASKRequestSerializer()
     context = ASKContextSerializer()
+
+    def validate(self, data):
+        if not data.get('session'):
+            if data.get('request', {}).get('type') == 'Messaging.MessageReceived':
+                # we need a session, but this out-of-session request type does not have one so copy from the context
+                data['session'] = {'application' : data['context']['System']['application'].copy()}
+            else:
+                raise serializers.ValidationError("Session field is required")
+        return data
 
 class ASKOutputSerializer(BaseASKSerializer):
     version = serializers.FloatField(required=True)
