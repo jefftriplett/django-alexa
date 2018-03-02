@@ -19,7 +19,16 @@ except:
 log = logging.getLogger(__name__)
 
 
-ALEXA_APP_IDS = dict([(str(os.environ[envvar]), envvar.replace("ALEXA_APP_ID_", "")) for envvar in os.environ.keys() if envvar.startswith('ALEXA_APP_ID_')])
+def _parse_app_ids():
+    # Parse ALEXA_APP_ID_appname env variable as comma separated list of Alexa app ids to map to app names...
+    apps = {}
+    for envvar in os.environ.keys():
+        if envvar.startswith('ALEXA_APP_ID_'):
+            for app_id in str(os.environ[envvar]).split(','):
+                apps[app_id.strip()] = envvar.replace("ALEXA_APP_ID_", "")
+    return apps
+
+ALEXA_APP_IDS = _parse_app_ids()
 ALEXA_REQUEST_VERIFICATON = ast.literal_eval(os.environ.get('ALEXA_REQUEST_VERIFICATON', 'True'))
 
 
