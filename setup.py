@@ -12,6 +12,5 @@ setup(
     license='MIT',
     setup_requires=setup_requires,
     pbr=True,
-    auto_version="PBR",
     install_requires=open(path.join(path.dirname(__file__), 'requirements.txt')).readlines(),
 )
