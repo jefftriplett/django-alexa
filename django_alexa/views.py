@@ -61,6 +61,8 @@ class ASKView(APIView):
                 intent_kwargs[slot_key] = slot_value
         else:
             intent_name = validated_data["request"]["type"]
+            intent_kwargs['context'] = validated_data['context']
+            intent_kwargs['request'] = validated_data['request']
         _, slot = IntentsSchema.get_intent(app, intent_name)
         if slot:
             slots = slot(data=intent_kwargs)

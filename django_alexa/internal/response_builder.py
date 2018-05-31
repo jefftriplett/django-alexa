@@ -20,6 +20,7 @@ class ResponseBuilder(object):
                         reprompt=None, reprompt_is_ssml=False, reprompt_append=True,
                         title=None, content=None, card_type=None,
                         card_image_small=None, card_image_large=None, card_text=None,
+                        
                         end_session=True, **kwargs):
         """
         Shortcut to create the data structure for an alexa response
@@ -69,7 +70,7 @@ class ResponseBuilder(object):
                         reprompt=None, reprompt_is_ssml=False, reprompt_append=True,
                         title=None, content=None, card_type=None,
                         card_image_small=None, card_image_large=None, card_text=None,
-                        end_session=True):
+                        end_session=True, audio_file_url=None):
         data = {}
         data['shouldEndSession'] = end_session
         if message:
@@ -88,6 +89,9 @@ class ResponseBuilder(object):
         if reprompt:
             data['reprompt'] = cls._create_reprompt(message=reprompt,
                                                     is_ssml=reprompt_is_ssml)
+        if audio_file_url:
+            data['directives'] = [ cls._create_audio(audio_file_url) ]
+            
         return data
 
     @classmethod
@@ -116,4 +120,19 @@ class ResponseBuilder(object):
         if content: data["content"] = content
         if card_text: data["text"] = card_text
         if card_image_small: data["image"] = {"smallImageUrl": card_image_small, "largeImageUrl": card_image_large}
+        return data
+
+    @classmethod
+    def _create_audio(cls, audio_file_url):
+        data = {
+            "type": "AudioPlayer.Play",
+            "playBehavior": "REPLACE_ALL",
+            "audioItem": {
+                "stream": {
+                    "token": "1",
+                    "url": audio_file_url,
+                    "offsetInMilliseconds": 0
+                }
+            }
+        }
         return data
