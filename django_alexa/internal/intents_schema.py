@@ -70,7 +70,7 @@ class IntentsSchema():
         """Generates the alexa intents schema json for an app"""
         intents = []
         for intent_name in cls.apps[app]:
-            intent_data = {"intent": intent_name,
+            intent_data = {"name": intent_name,
                            "slots": []}
             _, slot = cls.get_intent(app, intent_name)
             if slot:
@@ -151,7 +151,7 @@ def intent(*args, **kwargs):
 
     def register(func):
         app = kwargs.get('app', "base")
-        intent = kwargs.get('intent', func.__name__)
+        intent = kwargs.get('name', func.__name__)
         slots = kwargs.get('slots', None)
         IntentsSchema.register(func, intent, slots, app)
         return func
